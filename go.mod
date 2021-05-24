@@ -1,4 +1,4 @@
-module github.com/MichaelMure/go-term-markdown
+module github.com/quackduck/go-term-markdown
 
 go 1.12
 
