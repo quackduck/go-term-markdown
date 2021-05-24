@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	markdown "github.com/MichaelMure/go-term-markdown"
+	markdown "github.com/quackduck/go-term-markdown"
 )
 
 func main() {
