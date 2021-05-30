@@ -484,7 +484,7 @@ func (r *renderer) renderCodeBlock(w io.Writer, node *ast.CodeBlock) {
 
 	buf := &bytes.Buffer{}
 
-	err = formatter.Format(buf, styles.Autumn, iterator)
+	err = formatter.Format(buf, styles.Native, iterator)
 	if err != nil {
 		// Something failed, falling back to no highlight render
 		r.renderFormattedCodeBlock(w, code)
