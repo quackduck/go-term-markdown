@@ -22,3 +22,7 @@ var (
 	BlueBgItalic = color.New(color.BgBlue, color.Italic).SprintFunc()
 	Red          = color.New(color.FgRed).SprintFunc()
 )
+
+func init() {
+	color.NoColor = false
+}
