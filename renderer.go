@@ -450,6 +450,9 @@ func (r *renderer) renderHeading(w io.Writer, level int) {
 	_, _ = fmt.Fprintln(w)
 }
 
+// CurrentTheme sets the theme to use to color code blocks. Yes I know it's a bit hacky.
+var CurrentTheme = styles.Dracula
+
 func (r *renderer) renderCodeBlock(w io.Writer, node *ast.CodeBlock) {
 	code := string(node.Literal)
 	var lexer chroma.Lexer
@@ -484,7 +487,7 @@ func (r *renderer) renderCodeBlock(w io.Writer, node *ast.CodeBlock) {
 
 	buf := &bytes.Buffer{}
 
-	err = formatter.Format(buf, styles.Dracula, iterator)
+	err = formatter.Format(buf, CurrentTheme, iterator)
 	if err != nil {
 		// Something failed, falling back to no highlight render
 		r.renderFormattedCodeBlock(w, code)
