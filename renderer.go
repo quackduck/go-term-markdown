@@ -472,7 +472,7 @@ func (r *renderer) renderCodeBlock(w io.Writer, node *ast.CodeBlock) {
 	if color.NoColor {
 		formatter = formatters.Fallback
 	} else {
-		formatter = formatters.TTY8
+		formatter = formatters.TTY256
 	}
 
 	iterator, err := lexer.Tokenise(nil, code)
