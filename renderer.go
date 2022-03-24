@@ -907,7 +907,7 @@ func (r *renderer) renderImage(dest string, title string, lineWidth int) (result
 		// x *= 4
 	}
 	limitReader := io.LimitReader(reader, 30 * 1024 * 1024) // 30 megabyte limit
-	img, err := ansimage.NewScaledFromReader(reader, math.MaxInt32, x,
+	img, err := ansimage.NewScaledFromReader(limitReader, math.MaxInt32, x,
 		stdcolor.Black, ansimage.ScaleModeFit, r.imageDithering)
 
 	if err != nil {
