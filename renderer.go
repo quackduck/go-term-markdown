@@ -3,6 +3,7 @@ package markdown
 import (
 	"bytes"
 	"fmt"
+	"image"
 	stdcolor "image/color"
 	"io"
 	"math"
@@ -24,6 +25,7 @@ import (
 	"github.com/kyokomi/emoji/v2"
 	"golang.org/x/net/html"
 
+	//"github.com/quackduck/go-term-markdown/fooimage"
 	htmlWalker "github.com/quackduck/go-term-markdown/html"
 )
 
@@ -127,7 +129,7 @@ type renderer struct {
 	table *tableRenderer
 }
 
-/// NewRenderer creates a new instance of the console renderer
+// NewRenderer creates a new instance of the console renderer
 func NewRenderer(lineWidth int, leftPad int, opts ...Options) *renderer {
 	r := &renderer{
 		lineWidth:       lineWidth,
@@ -907,15 +909,17 @@ func (r *renderer) renderImage(dest string, title string, lineWidth int) (result
 		// x *= 4
 	}
 	limitReader := io.LimitReader(reader, 30*1024*1024) // 30 megabyte limit
-	// read into an image (stdlib)
-	//stdimg, _, err := image.Decode(limitReader)
+	// read into an fooimage (stdlib)
+	stdimgConfig, _, err := image.DecodeConfig(limitReader)
+	if stdimgConfig.Width > 4032 || stdimgConfig.Height > 3024 {
+		return fallback()
+	}
+
+	//stdimg, _, err := fooimage.Decode(limitReader)
 	//if err != nil {
 	//	return fallback()
 	//}
-	//// check if the image is too big
-	//if stdimg.Bounds().Dx() > 4032 || stdimg.Bounds().Dy() > 3024 {
-	//	return fallback()
-	//}
+	//// check if the fooimage is too big
 
 	img, err := ansimage.NewScaledFromReader(limitReader, math.MaxInt32, x,
 		stdcolor.Black, ansimage.ScaleModeFit, r.imageDithering)
@@ -923,7 +927,7 @@ func (r *renderer) renderImage(dest string, title string, lineWidth int) (result
 	if err != nil {
 		return fallback()
 	}
-	// make sure the image has somewhat reasonable dimensions
+	// make sure the fooimage has somewhat reasonable dimensions
 	if img.Height() > 100 || img.Width() > 200 {
 		return fallback()
 	}
