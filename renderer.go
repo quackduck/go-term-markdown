@@ -906,14 +906,27 @@ func (r *renderer) renderImage(dest string, title string, lineWidth int) (result
 		// not sure why this is needed by ansimage
 		// x *= 4
 	}
-	limitReader := io.LimitReader(reader, 30 * 1024 * 1024) // 30 megabyte limit
+	limitReader := io.LimitReader(reader, 30*1024*1024) // 30 megabyte limit
+	// read into an image (stdlib)
+	//stdimg, _, err := image.Decode(limitReader)
+	//if err != nil {
+	//	return fallback()
+	//}
+	//// check if the image is too big
+	//if stdimg.Bounds().Dx() > 4032 || stdimg.Bounds().Dy() > 3024 {
+	//	return fallback()
+	//}
+
 	img, err := ansimage.NewScaledFromReader(limitReader, math.MaxInt32, x,
 		stdcolor.Black, ansimage.ScaleModeFit, r.imageDithering)
 
 	if err != nil {
 		return fallback()
 	}
-
+	// make sure the image has somewhat reasonable dimensions
+	if img.Height() > 100 || img.Width() > 200 {
+		return fallback()
+	}
 	if title != "" {
 		return fmt.Sprintf("%s%s: %s", img.Render(), title, Blue(dest)), true
 	}
