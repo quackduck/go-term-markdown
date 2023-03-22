@@ -909,25 +909,22 @@ func (r *renderer) renderImage(dest string, title string, lineWidth int) (result
 		// x *= 4
 	}
 	limitReader := io.LimitReader(reader, 30*1024*1024) // 30 megabyte limit
-	// read into an fooimage (stdlib)
-	stdimgConfig, _, err := image.DecodeConfig(limitReader)
-	if stdimgConfig.Width > 4032 || stdimgConfig.Height > 3024 {
+
+	// https://github.com/golang/go/issues/12512#issuecomment-137981217
+	header := new(bytes.Buffer)
+	config, _, err := image.DecodeConfig(io.TeeReader(limitReader, header))
+	if err != nil || config.Width > 4032 || config.Height > 3024 {
 		return fallback()
 	}
 
-	//stdimg, _, err := fooimage.Decode(limitReader)
-	//if err != nil {
-	//	return fallback()
-	//}
-	//// check if the fooimage is too big
-
-	img, err := ansimage.NewScaledFromReader(limitReader, math.MaxInt32, x,
+	img, err := ansimage.NewScaledFromReader(io.MultiReader(header, limitReader), math.MaxInt32, x,
 		stdcolor.Black, ansimage.ScaleModeFit, r.imageDithering)
 
 	if err != nil {
 		return fallback()
 	}
-	// make sure the fooimage has somewhat reasonable dimensions
+
+	// make sure the image has somewhat reasonable dimensions
 	if img.Height() > 100 || img.Width() > 200 {
 		return fallback()
 	}
